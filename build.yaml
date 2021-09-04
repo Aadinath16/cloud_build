@@ -1,0 +1,18 @@
+steps:
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args: ['./ip.sh']  
+  # build the container image#
+- name: "gcr.io/cloud-builders/docker"
+  args: ["build", "-t", "gcr.io/da-devops-proj1/httpd:latest", "."]
+  # push container image
+- name: "gcr.io/cloud-builders/docker"
+  args: ["push", "gcr.io/da-devops-proj1/httpd:latest"]
+  #deploy container image to GKE
+- name: "gcr.io/cloud-builders/gke-deploy"
+  args:
+  - run
+  - --filename=res.yaml
+  - --image=gcr.io/da-devops-proj1/httpd:latest
+  - --location=europe-west2-a
+  - --cluster=private
